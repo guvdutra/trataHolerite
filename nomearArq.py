@@ -2,12 +2,14 @@ import re
 from PyPDF2 import PdfReader
 
 def extrairNome(texto):
-    padrao = r'Nº Reg. Chapa Nome\s*\d+\s*([\w\s]+)\s*Cód'
+    padrao = r"(?:Nome:\s*([^\n]+)|Reg\. Chapa Nome\s*\d+\s*([\w\s]+)\s*Cód)"
     resultado = re.search(padrao, texto)
     if resultado:
-        nome = resultado.group(1).strip()
-        # Remover caracteres inválidos e caracteres de nova linha do nome do arquivo
-        nome = re.sub(r'[\\/:*?"<>|\n]', '', nome)
+        # Verifica qual grupo foi capturado
+        nome = resultado.group(1) or resultado.group(2)
+        nome = nome.strip()
+        # Remove caracteres inválidos
+        nome = re.sub(r'[\/\\:*?"<>|\n]', ' ', nome)
         return nome
     else:
         return None
